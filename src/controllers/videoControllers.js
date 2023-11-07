@@ -2,7 +2,7 @@ import Video, { formatHashtags } from "../models/Video";
 
 export const home = async (req, res) => {
   try {
-    const videos = await Video.find({});
+    const videos = await Video.find({}).sort({ createAt: "desc" });
     console.log("videos", videos);
     return res.render("home", { pageTitle: "Home", videos });
   } catch (error) {
@@ -69,4 +69,18 @@ export const deleteVideo = async (req, res) => {
   await Video.findByIdAndDelete(id);
   // delete video
   return res.redirect("/");
+};
+
+export const search = async (req, res) => {
+  const { keyword } = req.query;
+  let videos = [];
+  if (keyword) {
+    videos = await Video.find({
+      title: {
+        $regex: new RegExp(`^${keyword}`, "i"),
+      },
+    });
+    console.log(videos);
+  }
+  return res.render("search", { pageTitle: "Search", videos });
 };
