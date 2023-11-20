@@ -97,7 +97,6 @@ export const finishGithubLogin = async (req, res) => {
         },
       })
     ).json();
-    console.log(userData);
     const emailData = await (
       await fetch(`${apiUrl}/user/emails`, {
         headers: {
@@ -114,7 +113,7 @@ export const finishGithubLogin = async (req, res) => {
     let user = await User.findOne({ email: emailObj.email });
     if (!user) {
       user = await User.create({
-        avataUrl: userData.avatar_url,
+        avatarUrl: userData.avatar_url,
         name: userData.name ? userData.name : userData.login,
         username: userData.login,
         email: emailObj.email,
@@ -146,7 +145,7 @@ export const getEdit = (req, res) => {
 export const postEdit = async (req, res) => {
   const {
     session: {
-      user: { _id, avataUrl },
+      user: { _id, avatarUrl },
     },
     body: { name, email, username, location },
     file,
@@ -177,7 +176,7 @@ export const postEdit = async (req, res) => {
   const updateUser = await User.findByIdAndUpdate(
     _id,
     {
-      avataUrl: file ? file.path : avataUrl,
+      avatarUrl: file ? `/${file.path}` : avatarUrl,
       name,
       email,
       username,
